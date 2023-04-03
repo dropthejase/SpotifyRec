@@ -8,7 +8,7 @@ class Playlist:
         
         tracks = api_call(token, api_url + "/tracks")['items']
         for i in range(len(tracks)):
-             self.tracklist.append((tracks[i]['track']['name'], tracks[i]['track']['artists'][0]['name'], tracks[i]['track']['href']))
+             self.tracklist.append((tracks[i]['track']['name'], tracks[i]['track']['artists'][0]['name'], tracks[i]['track']['id']))
 
     def __iter__(self):
         for track in range(len(self.tracklist)):
