@@ -36,7 +36,7 @@ def create_csv(token, csv_filename, playlists, category_id):
     if len(playlists) == 0:
         raise Exception("No Playlist Objects found")
 
-    with open(csv_filename, 'a', newline='') as csvfile:
+    with open(csv_filename, 'a', encoding='utf-8', newline='') as csvfile:
 
         fieldnames = ['name','artist','id','acousticness','danceability','duration_ms','energy','instrumentalness','liveness','loudness','speechiness','tempo','valence','playlist_name', 'playlist_category']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -54,7 +54,7 @@ def create_csv(token, csv_filename, playlists, category_id):
                                     'id': id,
                                     'acousticness': audio_features['acousticness'],
                                     'danceability': audio_features['danceability'],
-                                    'duration_ms': audio_features['danceability'],
+                                    'duration_ms': audio_features['duration_ms'],
                                     'energy': audio_features['energy'],
                                     'instrumentalness': audio_features['instrumentalness'],
                                     'liveness': audio_features['liveness'],
