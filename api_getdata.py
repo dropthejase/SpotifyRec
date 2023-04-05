@@ -5,26 +5,8 @@ import os
 import re
 import sys
 
-from api_util import get_audio_features, get_token
+from api_util import get_audio_features, get_token, get_track_popularity
 from Playlist import Playlist
-
-'''
-def make_playlists(token, category_id, limit=5):
-    """
-    Makes Playlist Objects based on category id
-    Arguments:
-        token: access token
-        category_id: category ID e.g. "dinner"
-        limit: how many results to return
-    Returns: A list of Playlist objects
-    """
-    playlists = []
-    result = get_category_playlists(token=token, category_id=category_id, limit=limit)
-    for name, url in result.items():
-        x = Playlist(token, name, url)
-        playlists.append(x)
-    return playlists
-'''
 
 def get_filepath(path, low):
     prefix = "mpd.slice."
@@ -35,6 +17,14 @@ def get_filepath(path, low):
     return filepath, filepath_low, filepath_high
 
 def get_playlists(filepath, low, high, regex=".*"):
+    """
+    Makes Playlist Objects objects based on a search string
+    Arguments:
+        filepath: path of the Spotify dataset files
+        low: bottom end of the range of playlist IDs to search
+        high: top range of the range of playlist IDs to search
+        regex: search string to be used to select playlists
+    """
     playlists = []
     pattern = re.compile(regex)
 
@@ -52,7 +42,12 @@ def get_playlists(filepath, low, high, regex=".*"):
                 playlists.append(playlist)
     return playlists
 
-# create csv
+def total_songs(playlists):
+    count = 0
+    for playlist in playlists:
+        count += len(playlist)
+    return count
+
 def create_csv(token, csv_filename, playlists, category_id, write_header=False):
     """
     Creates csv file with audio features based on list of Playlist Objects
@@ -71,7 +66,7 @@ def create_csv(token, csv_filename, playlists, category_id, write_header=False):
 
     with open(csv_filename, 'a', encoding='utf-8', newline='') as csvfile:
 
-        fieldnames = ['name','artist','id','acousticness','danceability','duration_ms','energy','instrumentalness','liveness','loudness','speechiness','tempo','valence','playlist_name', 'playlist_category']
+        fieldnames = ['name','artist','id','popularity','acousticness','danceability','duration_ms','energy','instrumentalness','liveness','loudness','speechiness','tempo','valence','playlist_name', 'playlist_category']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
         if write_header:
@@ -82,11 +77,20 @@ def create_csv(token, csv_filename, playlists, category_id, write_header=False):
                 name = playlist.tracklist[n][0]
                 artist = playlist.tracklist[n][1]
                 id = playlist.tracklist[n][2]
+
+                # if key error for popularity, skip track
+                try:
+                    popularity = get_track_popularity(token, id)['popularity']
+                except:
+                    continue
+                
+                # get audio features
                 audio_features = get_audio_features(token, id)
                 try:
                     writer.writerow({'name': name,
                                     'artist': artist,
                                     'id': id,
+                                    'popularity' : popularity,
                                     'acousticness': audio_features['acousticness'],
                                     'danceability': audio_features['danceability'],
                                     'duration_ms': audio_features['duration_ms'],
@@ -158,27 +162,33 @@ if __name__ == "__main__":
             filepath_high = high % 1000
         
         # morning
-        playlists = get_playlists(filepath, filepath_low, filepath_high, ".*morning.*")
+        playlists = get_playlists(filepath, filepath_low, filepath_high, ".*(morning)|(dawn)|(motivation).*")
         for playlist in playlists:
             morning.append(playlist)
         
         # afternoon
-        playlists = get_playlists(filepath, filepath_low, filepath_high, ".*(afternoon)|(study)|(lunch)|(work(?!.*out)).*")
+        playlists = get_playlists(filepath, filepath_low, filepath_high, ".*(afternoon)|(focus)|(lunch)|(study).*") #|(work(?!.*out))
         for playlist in playlists:
             afternoon.append(playlist)
         
         # evening
-        playlists = get_playlists(filepath, filepath_low, filepath_high, ".*(dinner)|(evening)|(night)|(late)|(sunset).*")
+        playlists = get_playlists(filepath, filepath_low, filepath_high, ".*(dinner)|(evening)|(night)|(late)|(sunset)|(supper).*")
         for playlist in playlists:
             evening.append(playlist)
         
         # sleep
-        playlists = get_playlists(filepath, filepath_low, filepath_high, ".*(sleep)|(bed).*")
+        playlists = get_playlists(filepath, filepath_low, filepath_high, ".*(sleep).*")
         for playlist in playlists:
             sleep.append(playlist)
         
         range_low += 1000
     
+
+    #print("Morning: ", total_songs(morning))
+    #print("Afternoon: ", total_songs(afternoon))
+    #print("Evening: ", total_songs(evening))
+    #print("Sleep: ", total_songs(sleep))
+
     # create csv dataset
     # 0 - morning, 1 - afternoon, 2 - evening, 3 - sleep
     create_csv(token, 'data.csv', morning, 0, write_header=True)

@@ -75,3 +75,15 @@ def get_category_playlists(token, category_id, country="GB", limit=1, offset=0):
         result[name] = playlist_api
 
     return result
+
+def get_track_popularity(token, id):
+    """
+    Gets popularity of a track from Spotify API
+    Arguments:
+        token: access token
+        id: track ID
+    Returns:
+        A JSON of the audio features - same response from the Spotify API
+    """
+    url = f"https://api.spotify.com/v1/tracks/{id}"
+    return api_call(token, url)
