@@ -186,7 +186,7 @@ if __name__ == "__main__":
 
     # create csv dataset
     # 0 - energy; 1 - chill; 2 - sad
-    #create_csv(token, 'data.csv', happy, 0, write_header=True)
-    #create_csv(token, 'data.csv', party, 1)
-    #create_csv(token, 'data.csv', chill, 2)
-    #create_csv(token, 'data.csv', sad, 3)
+    create_csv(token, 'data.csv', happy, 0, write_header=True)
+    create_csv(token, 'data.csv', party, 1)
+    create_csv(token, 'data.csv', chill, 2)
+    create_csv(token, 'data.csv', sad, 3)
