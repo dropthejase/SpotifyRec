@@ -143,7 +143,8 @@ if __name__ == "__main__":
     # get playlists
     path = 'data/'
 
-    highenergy = []
+    happy = []
+    party = []
     chill = []
     sad = []
 
@@ -160,26 +161,32 @@ if __name__ == "__main__":
         else:
             filepath_high = high % 1000
         
-        playlists = get_playlists(filepath, filepath_low, filepath_high, ".*(party)|(uplift)|(inspir)|(workout)|(energy)|(motivation).*")
+        playlists = get_playlists(filepath, filepath_low, filepath_high, ".*(happy)|(inspir)|(workout)|(energy)|(motivation)|(summer)|(road).*")
         for playlist in playlists:
-            highenergy.append(playlist)
-        
-        playlists = get_playlists(filepath, filepath_low, filepath_high, ".*(chill)|(focus)|(ambien)|(study).*") #|(work(?!.*out))
+            happy.append(playlist)
+
+        playlists = get_playlists(filepath, filepath_low, filepath_high, ".*(party)|(fun)|(dance)|(groove)|(club).*")
+        for playlist in playlists:
+            party.append(playlist)
+
+        playlists = get_playlists(filepath, filepath_low, filepath_high, ".*(chill)|(focus)|(ambien)|(study)|(concentra)|(mood)|(work(?!.*out)).*") #|(work(?!.*out))
         for playlist in playlists:
             chill.append(playlist)
         
-        playlists = get_playlists(filepath, filepath_low, filepath_high, ".*(sad)|(breakup)|(heartbr)|(moody)|(vibe)|(depress)|(angr)|(hard).*")
+        playlists = get_playlists(filepath, filepath_low, filepath_high, ".*(sad)|(breakup)|(heartbr)|(moody)|(vibe)|(depress)|(angr)|(slow)|(alternative).*")
         for playlist in playlists:
             sad.append(playlist)
         
         range_low += 1000
     
-    print("Energy: ", total_songs(highenergy))
+    print("Happy: ", total_songs(happy))
+    print("Party: ", total_songs(party))
     print("Chill: ", total_songs(chill))
     print("Sad: ", total_songs(sad))
 
     # create csv dataset
     # 0 - energy; 1 - chill; 2 - sad
-    #create_csv(token, 'data.csv', highenergy, 0, write_header=True)
-    #create_csv(token, 'data.csv', chill, 1)
-    #create_csv(token, 'data.csv', sad, 2)
+    #create_csv(token, 'data.csv', happy, 0, write_header=True)
+    #create_csv(token, 'data.csv', party, 1)
+    #create_csv(token, 'data.csv', chill, 2)
+    #create_csv(token, 'data.csv', sad, 3)
