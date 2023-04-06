@@ -143,10 +143,9 @@ if __name__ == "__main__":
     # get playlists
     path = 'data/'
 
-    morning = []
-    afternoon = []
-    evening = []
-    sleep = []
+    highenergy = []
+    chill = []
+    sad = []
 
     range_low = low // 1000 * 1000
     while range_low <= high:
@@ -161,37 +160,26 @@ if __name__ == "__main__":
         else:
             filepath_high = high % 1000
         
-        # morning
-        playlists = get_playlists(filepath, filepath_low, filepath_high, ".*(morning)|(dawn)|(motivation).*")
+        playlists = get_playlists(filepath, filepath_low, filepath_high, ".*(party)|(uplift)|(inspir)|(workout)|(energy)|(motivation).*")
         for playlist in playlists:
-            morning.append(playlist)
+            highenergy.append(playlist)
         
-        # afternoon
-        playlists = get_playlists(filepath, filepath_low, filepath_high, ".*(afternoon)|(focus)|(lunch)|(study).*") #|(work(?!.*out))
+        playlists = get_playlists(filepath, filepath_low, filepath_high, ".*(chill)|(focus)|(ambien)|(study).*") #|(work(?!.*out))
         for playlist in playlists:
-            afternoon.append(playlist)
+            chill.append(playlist)
         
-        # evening
-        playlists = get_playlists(filepath, filepath_low, filepath_high, ".*(dinner)|(evening)|(night)|(late)|(sunset)|(supper).*")
+        playlists = get_playlists(filepath, filepath_low, filepath_high, ".*(sad)|(breakup)|(heartbr)|(moody)|(vibe)|(depress)|(angr)|(hard).*")
         for playlist in playlists:
-            evening.append(playlist)
-        
-        # sleep
-        playlists = get_playlists(filepath, filepath_low, filepath_high, ".*(sleep).*")
-        for playlist in playlists:
-            sleep.append(playlist)
+            sad.append(playlist)
         
         range_low += 1000
     
-
-    #print("Morning: ", total_songs(morning))
-    #print("Afternoon: ", total_songs(afternoon))
-    #print("Evening: ", total_songs(evening))
-    #print("Sleep: ", total_songs(sleep))
+    print("Energy: ", total_songs(highenergy))
+    print("Chill: ", total_songs(chill))
+    print("Sad: ", total_songs(sad))
 
     # create csv dataset
-    # 0 - morning, 1 - afternoon, 2 - evening, 3 - sleep
-    create_csv(token, 'data.csv', morning, 0, write_header=True)
-    create_csv(token, 'data.csv', afternoon, 1)
-    create_csv(token, 'data.csv', evening, 2)
-    create_csv(token, 'data.csv', sleep, 3)
+    # 0 - energy; 1 - chill; 2 - sad
+    #create_csv(token, 'data.csv', highenergy, 0, write_header=True)
+    #create_csv(token, 'data.csv', chill, 1)
+    #create_csv(token, 'data.csv', sad, 2)
