@@ -27,13 +27,10 @@ def prepare_prediction(token, track_id):
         return X
     
     except:
-        return "something went wrong"
+        raise Exception
 
 def predict(X):
     
-    if X == "something went wrong":
-        return "something went wrong - please check your track ID"
-
     pY = MODEL.predict(X)
 
     if pY == 1:

@@ -1,4 +1,5 @@
 from requests import get, post
+from Playlist import Playlist
 
 def get_token(client_id, client_secret):
     """
@@ -75,6 +76,32 @@ def get_category_playlists(token, category_id, country="GB", limit=1, offset=0):
         result[name] = playlist_api
 
     return result
+
+def get_single_playlist(token, playlist_id):
+    """
+    Creates a Playlist object from a single playlist ID
+    Arguments:
+        token: access token
+        playlist_id: playlist ID
+    Returns:
+        A Playlist object
+    """
+    url = f"https://api.spotify.com/v1/playlists/{playlist_id}"
+    result = api_call(token, url)
+    playlist = Playlist(result['name'])
+
+    # just add first 100 tracks if playlist exceeds it
+    if result['tracks']['total'] <= 100:
+        num_tracks = result['tracks']['total']
+    else:
+        num_tracks = 100
+    for i in range(num_tracks):
+        track_name = result['tracks']['items'][i]['track']['name']
+        track_artist = result['tracks']['items'][i]['track']['artists'][0]['name']
+        track_id = result['tracks']['items'][i]['track']['id']
+        playlist.add_track(track_name, track_artist, track_id)
+    
+    return playlist
 
 def get_track_popularity(token, id):
     """
