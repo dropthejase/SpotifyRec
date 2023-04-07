@@ -1,11 +1,11 @@
+from dotenv import load_dotenv
 import pandas as pd
 import numpy as np
 import pickle
+import os
+import time
 
-from api_util import get_audio_features
-
-PREDICTION_LIST = ['party', 'chill', 'sad']
-MODEL = pickle.load(open('pipe_rf.pkl','rb'))
+from api_util import get_audio_features, get_token
 
 def prepare_prediction(token, track_id):
 
@@ -29,7 +29,29 @@ def prepare_prediction(token, track_id):
     except:
         raise Exception
 
-def predict(X):
+def predict_vibe(track_id):
+
+    # Load .env variables
+    load_dotenv()
+    client_id = os.getenv("CLIENT_ID")
+    client_secret = os.getenv("CLIENT_SECRET")
+
+    # get access token
+    token = get_token(client_id, client_secret)
+
+    # prepare data
+    while True:
+        try:
+            print("Analysing...")
+            time.sleep(3)
+            X = prepare_prediction(token, track_id)
+            break
+        except:
+            return "Something went wrong - please check your track ID and try again."
+
+    # make prediction
+    PREDICTION_LIST = ['party', 'chill', 'sad']
+    MODEL = pickle.load(open('pipe_rf.pkl','rb'))
     
     pY = MODEL.predict(X)
 
@@ -41,3 +63,4 @@ def predict(X):
         response = PREDICTION_LIST[2]
         
     return {'prediction': response}
+

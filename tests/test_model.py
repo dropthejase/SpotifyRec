@@ -6,6 +6,8 @@ import sys
 
 import api_util, util
 
+# use python -m tests.test_model <playlist_ID> to run
+
 def accuracy(results, answer):
     correct = 0
     N = len(results)
@@ -37,8 +39,7 @@ if __name__ == "__main__":
     for track in range(len(playlist)):
         track_name = playlist.tracklist[track][0]
         track_id = playlist.tracklist[track][2]
-        X = util.prepare_prediction(token, track_id)
-        X = util.predict(X)
+        X = util.predict(track_id)
         predictions_name.append([track_name, X['prediction']])
         predictions.append(X['prediction'])
     
