@@ -82,15 +82,14 @@ def create_csv(token, csv_filename, playlists, category_id, write_header=False):
                 try:
                     popularity = get_track_popularity(token, id)['popularity']
                 except:
-                    continue
-                
+                    popularity = None
                 # get audio features
                 audio_features = get_audio_features(token, id)
                 try:
                     writer.writerow({'name': name,
                                     'artist': artist,
                                     'id': id,
-                                    'popularity' : popularity,
+                                    'popularity': popularity,
                                     'acousticness': audio_features['acousticness'],
                                     'danceability': audio_features['danceability'],
                                     'duration_ms': audio_features['duration_ms'],
@@ -185,7 +184,7 @@ if __name__ == "__main__":
     print("Sad: ", total_songs(sad))
 
     # create csv dataset
-    # 0 - energy; 1 - chill; 2 - sad
+    # 0 - happy; 1 - party; 2 - chill; 3 - sad
     create_csv(token, 'data.csv', happy, 0, write_header=True)
     create_csv(token, 'data.csv', party, 1)
     create_csv(token, 'data.csv', chill, 2)

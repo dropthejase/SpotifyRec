@@ -36,8 +36,8 @@ def api_call(token, url):
     """
     headers = {"Authorization" : "Bearer " + token}
     result = get(url, headers=headers)
+    #print("Response: ", result)
     json_result = result.json()
-    
     return json_result
 
 def get_audio_features(token, id):
@@ -86,4 +86,5 @@ def get_track_popularity(token, id):
         A JSON of the audio features - same response from the Spotify API
     """
     url = f"https://api.spotify.com/v1/tracks/{id}"
-    return api_call(token, url)
+    result = api_call(token, url)
+    return result['popularity']
