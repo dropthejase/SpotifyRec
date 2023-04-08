@@ -42,8 +42,6 @@ def predict_vibe(track_id):
     # prepare data
     while True:
         try:
-            print("Analysing...")
-            time.sleep(3)
             X = prepare_prediction(token, track_id)
             break
         except:
@@ -62,5 +60,5 @@ def predict_vibe(track_id):
     else:
         response = PREDICTION_LIST[2]
         
-    return {'prediction': response}
+    return response
 

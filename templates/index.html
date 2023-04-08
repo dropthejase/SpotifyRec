@@ -18,7 +18,18 @@
             <input type="text" name="track_id_input">
             <br>
             <br>
-            <input type="submit" value="TRACK_ID" id="id">
+            <input type="submit" value="TRACK_ID" id="predict">
         </form>
+        <br>
+        <div>
+            {% if track_id and prediction != 'Something went wrong - please check your track ID and try again.' %}
+            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/{{track_id}}?utm_source=generator" width="50%" height="100" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            {% endif %}
+        </div>
+        <p>
+            {% for message in get_flashed_messages()%}
+                <p>{{message}}</p>
+            {% endfor %}
+        </p>
     </body>
 </html>
