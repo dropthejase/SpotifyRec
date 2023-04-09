@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Guess the Vibe!</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     </head>
     <body>
         <h1>Let me guess the vibe of your track!</h1>
@@ -13,8 +14,9 @@
             <li>Sad vibe</li>
         </ol>
         <form action="track_id" method="post">
-            <p>Enter a track ID below to find out!</p>
-            <br>
+            <p>
+                <strong>Enter a track ID below to find out!</strong>
+            </p>
             <input type="text" name="track_id_input">
             <br>
             <br>
