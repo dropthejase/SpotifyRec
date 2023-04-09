@@ -14,10 +14,12 @@
         </ol>
         <p>To continue, please enter your name below and hit 'Enter'</p>
         <p>You will be prompted to login to your Spotify account</p>
+        <p>We'll only keep you logged in for 60min before we ask you to sign back in again!</p>
         <form action="login" method="post">
             <input type="text" name="user">
             <br>
             <input type="submit" value="Enter" id="user_login">
         </form>
+        <p style="color: red;">{{ text }}</p>
     </body>
 </html>

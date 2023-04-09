@@ -6,7 +6,13 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     </head>
     <body>
+        <div>
+            <form action="logout" method="post">
+                <input type="submit" value="Logout" id="user_logout">
+            </form>
+        </div>
         <h1>Hi {{ user }}!</h1>
+        <img src = {{ user_img }} height="50%">
         <h1>Let me guess the vibe of your track!</h1>
         <p>Based on audio features in the track you provide, I will guess whether the song has a:</p>
         <ol>

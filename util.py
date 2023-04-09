@@ -1,8 +1,10 @@
 import hashlib, string, secrets
 from requests import get, post, Request
+from dotenv import load_dotenv
 import base64
 from api_util import get_audio_features
 import numpy as np
+import os
 import pickle
 
 def generate_randomstring(n):
@@ -38,8 +40,13 @@ def get_auth_code():
     Returns:
         Authorisation code
     """
+
+    # Load .env variables
+    load_dotenv()
+    client_id = os.getenv("CLIENT_ID")
+
     url = "https://accounts.spotify.com/authorize?"
-    scope = "playlist-modify-public"
+    scope = "user-read-private user-read-email playlist-modify-public"
     redirect_uri = "http://localhost:5000/callback"
     state = generate_randomstring(16)
     code_verifier = generate_randomstring(128)
@@ -47,7 +54,7 @@ def get_auth_code():
 
     params = {
         "response_type": "code",
-        "client_id": "af2795e2f63545f3883b5ab47e29187a",
+        "client_id": client_id,
         "scope": scope,
         "redirect_uri": redirect_uri,
         "state": state,
@@ -62,6 +69,10 @@ def get_auth_code():
 
 def get_token_pkce(auth_code, code_verifier):
 
+    # Load .env variables
+    load_dotenv()
+    client_id = os.getenv("CLIENT_ID")
+
     url = "https://accounts.spotify.com/api/token"
     redirect_uri = "http://localhost:5000/callback"
 
@@ -72,7 +83,7 @@ def get_token_pkce(auth_code, code_verifier):
     data = {
         "grant_type" : "authorization_code",
         "code" : auth_code,
-        "client_id" : "af2795e2f63545f3883b5ab47e29187a",
+        "client_id" : client_id,
         "redirect_uri": redirect_uri,
         "code_verifier": code_verifier}
     
@@ -80,7 +91,6 @@ def get_token_pkce(auth_code, code_verifier):
     request = request.prepare()
 
     result = post(url, headers=headers, data=data)
-    print("Result: ", result.content)
     json_result = result.json()
     access_token = json_result["access_token"]
     refresh_token = json_result["refresh_token"]

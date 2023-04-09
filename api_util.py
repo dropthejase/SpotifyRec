@@ -37,7 +37,6 @@ def api_call(token, url):
     """
     headers = {"Authorization" : "Bearer " + token}
     result = get(url, headers=headers)
-    #print("Response: ", result)
     json_result = result.json()
     return json_result
 
