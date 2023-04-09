@@ -18,25 +18,11 @@ def index():
 
 @app.route('/login', methods=["POST", "GET"])
 def login():
-
     if request.method == 'POST':
-        user = request.form['user']
-
-        # make sure user enters a name
-        if user == '':
-            text = "Please enter a username"
-            return render_template("index.html", text=text)
-
-        # make username 
-        elif not re.match(re.compile("\w+"), user):
-            text = "Please only use letters and/or numbers"
-            return render_template("index.html", text=text)
-        
-        else:
-            # redirect to Spotify login
-            get_auth_code = util.get_auth_code()
-            app.config['CODE_VERIFIER'] = get_auth_code[1]
-            return redirect(get_auth_code[0])
+        # redirect to Spotify login
+        get_auth_code = util.get_auth_code()
+        app.config['CODE_VERIFIER'] = get_auth_code[1]
+        return redirect(get_auth_code[0])
     else:
         return redirect(url_for("index"))
 
@@ -52,9 +38,12 @@ def callback():
     # get user's name and store in a session
     user = api_call(access_token, "https://api.spotify.com/v1/me")["display_name"]
     user_img = api_call(access_token, "https://api.spotify.com/v1/me")['images'][0]["url"]
+    user_id = api_call(access_token, "https://api.spotify.com/v1/me")["id"]
+
     session.permanent = True
     session['user'] = user
     session['user_img'] = user_img
+    session['user_id'] = user_id
 
     return redirect(url_for("track_id"))
 
@@ -85,6 +74,25 @@ def track_id():
             return render_template('track_id.html', user=user, user_img=user_img)
         else:
             return redirect(url_for("login"))
+
+@app.route('/playlists', methods=['POST', 'GET'])
+def playlists():
+
+    # check if user is logged in
+    if 'user' in session:
+        user = session.get('user')
+        user_img = session.get('user_img')
+        user_id = session.get('user_id')
+    else:
+        return redirect(url_for("login"))
+
+    if request.method == 'POST':
+        ### TO DO create the playlist ###
+        flash("Done!")
+        return render_template("playlists.html", user=user, user_img=user_img)
+    else:
+        return render_template('playlists.html', user=user, user_img=user_img)
+
 
 @app.route('/logout', methods=["POST","GET"])
 def logout():

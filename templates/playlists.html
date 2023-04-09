@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Guess the Vibe!</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    </head>
+    <body>
+        <div>
+            <form action="logout" method="post">
+                <input type="submit" value="Logout" id="user_logout">
+            </form>
+        </div>
+        <h1>Hi {{ user }}!</h1>
+        <img src = {{ user_img }} height="150px">
+        <h3>Here are some new songs grouped by vibe!</h3>
+        <h3 style="color: red;">ADD PLAYLISTS HERE</h3>
+        <p>You can create playlists with these below!</p>
+
+        <form action="playlists" method="post">
+            <input type="radio" name="playlist_vibe" value="Party">
+            <label for="playlist_vibe">Party</label><br>
+            <input type="radio" name="playlist_vibe" value="Chill">
+            <label for="playlist_vibe">Chill</label><br>
+            <input type="radio" name="playlist_vibe" value="Sad">
+            <label for="playlist_vibe">Sad</label><br>
+            <br>
+            <input type="submit" class="submit_buttons" value="Create Playlist" id="create_playlist">
+        </form>
+    </body>
+</html>

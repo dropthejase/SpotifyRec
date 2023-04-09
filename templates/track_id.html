@@ -12,8 +12,8 @@
             </form>
         </div>
         <h1>Hi {{ user }}!</h1>
-        <img src = {{ user_img }} height="50%">
-        <h1>Let me guess the vibe of your track!</h1>
+        <img src = {{ user_img }} height="150px">
+        <h3>Let me guess the vibe of your track!</h3>
         <p>Based on audio features in the track you provide, I will guess whether the song has a:</p>
         <ol>
             <li>Party vibe</li>
@@ -27,7 +27,7 @@
             <input type="text" name="track_id_input">
             <br>
             <br>
-            <input type="submit" value="TRACK_ID" id="predict">
+            <input type="submit" class="submit_buttons" value="Get Vibe!" id="predict">
         </form>
         <br>
         <div>
