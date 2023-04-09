@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Guess the Vibe!</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    </head>
+    <body>
+        <h1>Hi {{ user }}!</h1>
+        <h1>Let me guess the vibe of your track!</h1>
+        <p>Based on audio features in the track you provide, I will guess whether the song has a:</p>
+        <ol>
+            <li>Party vibe</li>
+            <li>Chill vibe; or</li>
+            <li>Sad vibe</li>
+        </ol>
+        <form action="track_id" method="post">
+            <p>
+                <strong>Enter a track ID below to find out!</strong>
+            </p>
+            <input type="text" name="track_id_input">
+            <br>
+            <br>
+            <input type="submit" value="TRACK_ID" id="predict">
+        </form>
+        <br>
+        <div>
+            {% if track_id and prediction != 'Something went wrong - please check your track ID and try again.' %}
+            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/{{track_id}}?utm_source=generator" width="50%" height="100" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            {% endif %}
+        </div>
+        <p>
+            {% for message in get_flashed_messages()%}
+                <p>{{message}}</p>
+            {% endfor %}
+        </p>
+    </body>
+</html>

@@ -6,32 +6,18 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     </head>
     <body>
-        <h1>Let me guess the vibe of your track!</h1>
-        <p>Based on audio features in the track you provide, I will guess whether the song has a:</p>
+        <h1>Welcome!</h1>
+        <p>This web app will allow you to do several things:</p>
         <ol>
-            <li>Party vibe</li>
-            <li>Chill vibe; or</li>
-            <li>Sad vibe</li>
+            <li>Test the 'vibe' of a track (party, chill or sad)</li>
+            <li>Create playlists for each of the three vibes above, which you can add to your own playlists</li>
         </ol>
-        <form action="track_id" method="post">
-            <p>
-                <strong>Enter a track ID below to find out!</strong>
-            </p>
-            <input type="text" name="track_id_input">
+        <p>To continue, please enter your name below and hit 'Enter'</p>
+        <p>You will be prompted to login to your Spotify account</p>
+        <form action="login" method="post">
+            <input type="text" name="user">
             <br>
-            <br>
-            <input type="submit" value="TRACK_ID" id="predict">
+            <input type="submit" value="Enter" id="user_login">
         </form>
-        <br>
-        <div>
-            {% if track_id and prediction != 'Something went wrong - please check your track ID and try again.' %}
-            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/{{track_id}}?utm_source=generator" width="50%" height="100" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-            {% endif %}
-        </div>
-        <p>
-            {% for message in get_flashed_messages()%}
-                <p>{{message}}</p>
-            {% endfor %}
-        </p>
     </body>
 </html>
