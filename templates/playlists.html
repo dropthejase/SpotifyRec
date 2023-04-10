@@ -18,13 +18,11 @@
         <p>You can create playlists with these below!</p>
 
         <form action="playlists" method="post">
-            <input type="radio" name="playlist_vibe" value="Party">
-            <label for="playlist_vibe">Party</label><br>
-            <input type="radio" name="playlist_vibe" value="Chill">
-            <label for="playlist_vibe">Chill</label><br>
-            <input type="radio" name="playlist_vibe" value="Sad">
-            <label for="playlist_vibe">Sad</label><br>
-            <br>
+            <select name="playlist_vibe" class="playlist_dropdown">
+                <option value="party">Party</option>
+                <option value="chill">Chill</option>
+                <option value="vibe">Vibe</option>
+            </select>
             <input type="submit" class="submit_buttons" value="Create Playlist" id="create_playlist">
         </form>
     </body>

@@ -88,7 +88,6 @@ def playlists():
 
     if request.method == 'POST':
         ### TO DO create the playlist ###
-        flash("Done!")
         return render_template("playlists.html", user=user, user_img=user_img)
     else:
         return render_template('playlists.html', user=user, user_img=user_img)

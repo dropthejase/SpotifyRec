@@ -1,7 +1,12 @@
-body, .submit_buttons {
+body, .submit_buttons, .playlist_dropdown {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 20px;
     line-height: 1.5em;
+}
+
+.playlist_dropdown {
+    margin-right: 10px;
+    width: 200px;
 }
 
 h1 {
