@@ -1,6 +1,9 @@
 import json
+
 from requests import get, post
+
 from Playlist import Playlist
+
 
 def get_token(client_id, client_secret):
     """
@@ -27,6 +30,7 @@ def get_token(client_id, client_secret):
     
     return token
 
+
 def api_call(token, url):
     """
     Calls the Spotify API
@@ -41,6 +45,7 @@ def api_call(token, url):
     json_result = result.json()
     return json_result
 
+
 def get_audio_features(token, id):
     """
     Gets audio features analysis for a track from Spotify API
@@ -52,6 +57,7 @@ def get_audio_features(token, id):
     """
     url = f"https://api.spotify.com/v1/audio-features/{id}"
     return api_call(token, url)
+
 
 def get_category_playlists(token, category_id, country="GB", limit=1, offset=0):
     """
@@ -76,6 +82,7 @@ def get_category_playlists(token, category_id, country="GB", limit=1, offset=0):
         result[name] = playlist_id
 
     return result
+
 
 def get_single_playlist(token, playlist_id):
     """
@@ -107,6 +114,7 @@ def get_single_playlist(token, playlist_id):
     
     return playlist
 
+
 def get_track_popularity(token, id):
     """
     Gets popularity of a track from Spotify API
@@ -119,6 +127,7 @@ def get_track_popularity(token, id):
     url = f"https://api.spotify.com/v1/tracks/{id}"
     result = api_call(token, url)
     return result['popularity']
+
 
 def api_call_post(token, url, body):
     """

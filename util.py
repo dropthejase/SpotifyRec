@@ -1,11 +1,18 @@
-import hashlib, string, secrets
-from requests import get, post, Request
-from dotenv import load_dotenv
+
 import base64
-from api_util import get_audio_features, get_category_playlists, get_single_playlist, get_token
+import csv
+import hashlib
+import os
+import pickle
+import string
+import secrets
+import sqlite3
+
+from dotenv import load_dotenv
 import numpy as np
-import csv, os, pickle, sqlite3
-from datetime import datetime
+from requests import post, Request
+
+from api_util import get_audio_features, get_category_playlists, get_single_playlist, get_token
 
 ########################### PKCE AUTHENTICATION ###########################
 
@@ -21,6 +28,7 @@ def generate_randomstring(n):
     code_verifier = ''.join(secrets.choice(alphabet) for i in range(n))
     return code_verifier
 
+
 def generate_code_challenge(code_verifier):
     """
     Transforms code verifier using SHA256 algorithm, creating digest
@@ -35,6 +43,7 @@ def generate_code_challenge(code_verifier):
     code_challenge = code_challenge.replace('=', '')
 
     return code_challenge
+
 
 def get_auth_code():
     """
@@ -68,6 +77,7 @@ def get_auth_code():
     request = request.prepare()
     
     return request.url, code_verifier
+
 
 def get_token_pkce(auth_code, code_verifier):
 
@@ -132,6 +142,7 @@ def prepare_prediction(token, track_id):
     except:
         raise Exception
     
+
 def predict_vibe(access_token, track_id):
 
     # prepare data
@@ -156,6 +167,7 @@ def predict_vibe(access_token, track_id):
         response = PREDICTION_LIST[2]
         
     return response
+
 
 def create_csv_from_model(token, csv_filename, playlists, write_header=False):
     """
@@ -229,6 +241,7 @@ def refresh_predictions_csv(token, category_id="toplists", limit=25):
     # Create csv with predictions
     create_csv_from_model(token, 'predictions.csv', playlists, True)
 
+
 def refresh_table(db_name='topplaylist_songs.db', table_name='predictions', csvfilename='predictions.csv'):
     """
     Refreshes database from predictions.csv
@@ -258,6 +271,7 @@ def refresh_table(db_name='topplaylist_songs.db', table_name='predictions', csvf
     conn.commit()
     conn.close()
 
+
 def create_table(db_name='topplaylist_songs.db', table_name='predictions'):
     """
     Creates a table
@@ -285,6 +299,7 @@ def create_table(db_name='topplaylist_songs.db', table_name='predictions'):
 
     # close connection
     conn.close()
+
 
 def song_recs(db_name='topplaylist_songs.db', table_name='predictions', vibe='party', limit=25):
     """

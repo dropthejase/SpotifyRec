@@ -1,7 +1,10 @@
-from flask import Flask, flash, make_response, render_template, request, session, redirect, url_for
 from datetime import datetime, timedelta
+
+from flask import Flask, flash, make_response, render_template, request, session, redirect, url_for
+
 from api_util import api_call, api_call_post
 import util
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = util.generate_randomstring(16).encode('utf-8')
@@ -13,6 +16,7 @@ def index():
         return redirect(url_for("playlists"))
     return render_template("index.html")
 
+
 @app.route('/login', methods=["POST", "GET"])
 def login():
     if request.method == 'POST':
@@ -22,6 +26,7 @@ def login():
         return redirect(get_auth_code[0])
     else:
         return redirect(url_for("index"))
+
 
 @app.route('/callback')
 def callback():
@@ -43,6 +48,7 @@ def callback():
     session['user_id'] = user_id
 
     return redirect(url_for("playlists"))
+
 
 @app.route('/track_id', methods=['POST', 'GET'])
 def track_id():
@@ -72,10 +78,12 @@ def track_id():
         else:
             return redirect(url_for("login"))
 
+
 # Create playlists
 party = util.song_recs(vibe="party", limit=50)
 chill = util.song_recs(vibe="chill", limit=50)
 sad = util.song_recs(vibe="sad", limit=50)
+
 
 @app.route('/playlists', methods=['POST', 'GET'])
 def playlists():
@@ -134,6 +142,7 @@ def playlists():
         else:
             return render_template("playlists.html", user=user, user_img=user_img, playlists=playlists)
 
+
 @app.route('/logout', methods=["POST","GET"])
 def logout():
     if request.method == "POST":
@@ -141,6 +150,7 @@ def logout():
         return redirect(url_for("index"))
     else:
         return redirect(url_for("playlists"))
+
 
 if __name__ == "__main__":
     app.run(debug=True)

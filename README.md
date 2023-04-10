@@ -75,7 +75,7 @@ I also used PyTorch to see if an ANN could beat the Random Forest, but it appear
 The final model is then used to predict the vibe of new songs from the 'toplists' category from Spotify, as well as any track ID that the user wishes to feed into the algorithm.
 
 ### Limitations ###
-* The model works out to be about 70% accurate when used on the test set
+* The model works out to be about 76% accurate when used on the test set
 * My approach to creating 'true' labels to train the classifier relied on what Spotify users named their playlists. However, music is subjective: someone's 'party playlist' will sound different from another
 * A 'party' vibe does not necessarily just mean upbeat, loud EDM songs. An 80s party for example, will have songs with different characteristics.
 * My search keywords may not be expansive enough
