@@ -1,3 +1,4 @@
+import json
 from requests import get, post
 from Playlist import Playlist
 
@@ -118,3 +119,20 @@ def get_track_popularity(token, id):
     url = f"https://api.spotify.com/v1/tracks/{id}"
     result = api_call(token, url)
     return result['popularity']
+
+def api_call_post(token, url, body):
+    """
+    POST request to Spotify API
+    Arguments:
+        token: access token
+        url: the url for the POST request
+        body: body of request
+    Returns:
+        The API's response in JSON format
+    """
+    headers = {"Authorization": "Bearer " + token,
+               "Content_Type": "application/json"}
+    body = body
+    result = post(url, headers=headers,data=json.dumps(body))
+    json_result = result.json()
+    return json_result

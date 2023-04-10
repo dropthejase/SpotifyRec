@@ -2,11 +2,12 @@ import hashlib, string, secrets
 from requests import get, post, Request
 from dotenv import load_dotenv
 import base64
-from api_util import get_audio_features
+from api_util import get_audio_features, get_category_playlists, get_single_playlist, get_token
 import numpy as np
-import csv
-import os
-import pickle
+import csv, os, pickle, sqlite3
+from datetime import datetime
+
+########################### PKCE AUTHENTICATION ###########################
 
 def generate_randomstring(n):
     """
@@ -47,7 +48,7 @@ def get_auth_code():
     client_id = os.getenv("CLIENT_ID")
 
     url = "https://accounts.spotify.com/authorize?"
-    scope = "user-read-private user-read-email playlist-modify-public"
+    scope = "user-read-private user-read-email playlist-modify-public playlist-modify-private"
     redirect_uri = "http://localhost:5000/callback"
     state = generate_randomstring(16)
     code_verifier = generate_randomstring(128)
@@ -97,6 +98,8 @@ def get_token_pkce(auth_code, code_verifier):
     refresh_token = json_result["refresh_token"]
 
     return access_token, refresh_token
+
+########################### MAKING VIBE PREDICTIONS ###########################
 
 def prepare_prediction(token, track_id):
     """
@@ -196,3 +199,116 @@ def create_csv_from_model(token, csv_filename, playlists, write_header=False):
                                     'vibe': predicted_vibe})
                 except:
                     continue
+
+########################### DATABASE / RECOMMENDING PLAYLISTS ###########################
+
+def refresh_predictions_csv(token, category_id="toplists", limit=25):
+    """
+    Refreshes list of songs based on Spotify category ID (default = 'toplists' category)
+    Then pulls songs from the playlists collected, runs them through model and creates 'predictions.csv'
+    Arguments:
+        token: access token
+        category_id: playlist category_id
+        limit: how many playlists to look at
+    """
+    # Get access token
+    load_dotenv()
+    client_id = os.getenv('CLIENT_ID')
+    client_secret = os.getenv('CLIENT_SECRET')
+    token = get_token(client_id, client_secret)
+
+    # Get playlists
+    toplist_playlists = get_category_playlists(token=token, category_id=category_id,limit=limit)
+
+    # Create Playlist objects
+    playlists = []
+    for name, id in toplist_playlists.items():
+        playlist = get_single_playlist(token, id)
+        playlists.append(playlist)
+    
+    # Create csv with predictions
+    create_csv_from_model(token, 'predictions.csv', playlists, True)
+
+def refresh_table(db_name='topplaylist_songs.db', table_name='predictions', csvfilename='predictions.csv'):
+    """
+    Refreshes database from predictions.csv
+    Arguments:
+        db_name: name of DB
+        table_name: name of table
+        csvfilename: filename of csv file to pull data into table
+    """
+    # delete all entries
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+    c.execute(f"DELETE FROM {table_name}")
+    c.commit()
+
+    # add new data
+    with open(csvfilename) as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
+        id = 0
+        for row in reader:
+            if id == 0:
+                id += 1
+                continue
+            c.execute(f"""INSERT INTO {table_name} (name, artist, track_id, playlist_name, vibe)
+                            VALUES (?, ?, ?, ?, ?)""", (row[0], row[1], row[2], row[3], row[4]))
+            id += 1
+
+    conn.commit()
+    conn.close()
+
+def create_table(db_name='topplaylist_songs.db', table_name='predictions'):
+    """
+    Creates a table
+    Arguments:
+        db_name: name of DB
+        table_name: name of table to create
+    """
+    # connect to db
+    conn = sqlite3.connect(db_name)
+
+    # create a cursor
+    c = conn.cursor()
+
+    # create table
+    c.execute(f"""CREATE TABLE {table_name} (
+            name TEXT,
+            artist TEXT,
+            track_id TEXT,
+            playlist_name TEXT,
+            vibe TEXT
+        )""")
+    
+    # commit to db
+    conn.commit()
+
+    # close connection
+    conn.close()
+
+def song_recs(db_name='topplaylist_songs.db', table_name='predictions', vibe='party', limit=25):
+    """
+    Creates a list of recommended songs based on vibe selected using SQL query
+    Arguments:
+        db_name: name of DB
+        table_name: name of table
+        vibe: vibe chosen
+        limit: how many songs to pull
+    Returns:
+        A list of songs
+    """
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+
+    c.execute(f"""SELECT * FROM {table_name}
+                    WHERE rowid IN (SELECT MAX(rowid) FROM {table_name} GROUP BY track_id)
+                        AND vibe = '{vibe}'
+                    ORDER BY RANDOM()
+                    LIMIT({limit})""")
+
+    recommended_playlist = c.fetchall()
+
+    conn.commit()
+    conn.close()
+
+    return recommended_playlist

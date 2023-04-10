@@ -14,16 +14,80 @@
         <h1>Hi {{ user }}!</h1>
         <img src = {{ user_img }} height="150px">
         <h3>Here are some new songs grouped by vibe!</h3>
-        <h3 style="color: red;">ADD PLAYLISTS HERE</h3>
-        <p>You can create playlists with these below!</p>
-
+        <p>Choose the vibe of the playlist you want and hit 'Create Playlist'</p>
+        <p>Scroll further down to see what songs would be included in each category</p>
         <form action="playlists" method="post">
             <select name="playlist_vibe" class="playlist_dropdown">
                 <option value="party">Party</option>
                 <option value="chill">Chill</option>
-                <option value="vibe">Vibe</option>
+                <option value="sad">Sad</option>
             </select>
             <input type="submit" class="submit_buttons" value="Create Playlist" id="create_playlist">
         </form>
+        <br>
+        <div>
+            {% if playlist_id %}
+            <p style="color: green;">Created!</p>
+            <iframe style="border-radius:6px" src="https://open.spotify.com/embed/playlist/{{ playlist_id }}?utm_source=generator" width="50%" height="700"
+                frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            {% endif %}
+        </div>
+        <div style="overflow-x:auto;">
+            <h3>Party</h3>
+            <table>
+                <tr>
+                  <th>Name</th>
+                  <th>Artist</th>
+                  <th>Link</th>
+                </tr>
+                {% for track in playlists['party'] %}
+                <tr>
+                    <th>{{ track[0] }}</th>
+                    <th>{{ track[1] }}</th>
+                    <th>
+                        <a href="https://open.spotify.com/track/{{track[2]}}">Link</a>
+                    </th>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div style="overflow-x:auto;">
+            <h3>Chill</h3>
+            <table>
+                <tr>
+                  <th>Name</th>
+                  <th>Artist</th>
+                  <th>Link</th>
+                </tr>
+                {% for track in playlists['chill'] %}
+                <tr>
+                    <th>{{ track[0] }}</th>
+                    <th>{{ track[1] }}</th>
+                    <th>
+                        <a href="https://open.spotify.com/track/{{track[2]}}">Link</a>
+                    </th>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div style="overflow-x:auto;">
+            <h3>Sad</h3>
+            <table>
+                <tr>
+                  <th>Name</th>
+                  <th>Artist</th>
+                  <th>Link</th>
+                </tr>
+                {% for track in playlists['sad'] %}
+                <tr>
+                    <th>{{ track[0] }}</th>
+                    <th>{{ track[1] }}</th>
+                    <th>
+                        <a href="https://open.spotify.com/track/{{track[2]}}">Link</a>
+                    </th>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
     </body>
 </html>

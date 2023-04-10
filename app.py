@@ -1,8 +1,6 @@
 from flask import Flask, flash, make_response, render_template, request, session, redirect, url_for
-from datetime import timedelta
-from api_util import api_call
-import re
-import requests
+from datetime import datetime, timedelta
+from api_util import api_call, api_call_post
 import util
 
 app = Flask(__name__)
@@ -11,7 +9,6 @@ app.permanent_session_lifetime = timedelta(minutes=60)
 
 @app.route('/')
 def index():
-    print("SESSION 0: ", session)
     if 'user' in session:
         return redirect(url_for("track_id"))
     return render_template("index.html")
@@ -75,6 +72,11 @@ def track_id():
         else:
             return redirect(url_for("login"))
 
+# Create playlists
+party = util.song_recs(vibe="party", limit=50)
+chill = util.song_recs(vibe="chill", limit=50)
+sad = util.song_recs(vibe="sad", limit=50)
+
 @app.route('/playlists', methods=['POST', 'GET'])
 def playlists():
 
@@ -82,16 +84,55 @@ def playlists():
     if 'user' in session:
         user = session.get('user')
         user_img = session.get('user_img')
-        user_id = session.get('user_id')
+        access_token = session.get('access_token')
+
     else:
         return redirect(url_for("login"))
 
-    if request.method == 'POST':
-        ### TO DO create the playlist ###
-        return render_template("playlists.html", user=user, user_img=user_img)
-    else:
-        return render_template('playlists.html', user=user, user_img=user_img)
+    # Get current user ID
+    user_id = session.get('user_id')
 
+    # Initialise playlist_id variable
+    playlist_id = None
+
+    # Create playlists
+    playlists = {
+        "party": party,
+        "chill": chill,
+        "sad": sad
+    }
+    if request.method == 'POST':
+
+        # Query DB
+        selected_vibe = request.form['playlist_vibe']
+        playlist = playlists['selected_vibe']
+
+        # Create playlist
+        createplaylist_url = f"https://api.spotify.com/v1/users/{user_id}/playlists"
+        playlist_name = selected_vibe.capitalize() + " " + datetime.now().strftime('%d.%m.%y %H:%M:%S')
+
+        createplaylist_body = {"name": playlist_name,
+                "public": "false"
+                }
+        playlist_id = api_call_post(access_token,createplaylist_url,createplaylist_body)['id']
+        print("PLAYLIST ID: ", playlist_id)
+        
+        # Add songs to playlist
+        addsongs_url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
+        addsongs_body = {"uris": [],
+                         "position": 0}
+        for song in playlist:
+            track_id = song[2]
+            addsongs_body['uris'].append(f"spotify:track:{track_id}")
+
+        api_call_post(access_token, addsongs_url, addsongs_body)
+
+        return render_template("playlists.html", user=user, user_img=user_img, playlist_id=playlist_id, playlists=playlists)
+    else:
+        if playlist_id:
+            return render_template("playlists.html", user=user, user_img=user_img, playlist_id=playlist_id, playlists=playlists)
+        else:
+            return render_template("playlists.html", user=user, user_img=user_img, playlists=playlists)
 
 @app.route('/logout', methods=["POST","GET"])
 def logout():
