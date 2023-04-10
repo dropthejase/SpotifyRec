@@ -66,7 +66,7 @@ def create_csv(token, csv_filename, playlists, category_id, write_header=False):
 
     with open(csv_filename, 'a', encoding='utf-8', newline='') as csvfile:
 
-        fieldnames = ['name','artist','id','popularity']
+        fieldnames = ['name','artist','id','popularity','acousticness','danceability','duration_ms','energy','instrumentalness','liveness','loudness','speechiness','tempo','valence','playlist_name', 'playlist_category']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
         if write_header:
@@ -80,23 +80,40 @@ def create_csv(token, csv_filename, playlists, category_id, write_header=False):
 
                 # if key error for popularity, skip track
                 try:
-                    popularity = get_track_popularity(token, id)
+                    popularity = get_track_popularity(token, id)['popularity']
                 except:
                     popularity = None
+                # get audio features
+                audio_features = get_audio_features(token, id)
                 try:
                     writer.writerow({'name': name,
                                     'artist': artist,
                                     'id': id,
-                                    'popularity': popularity})
+                                    'popularity': popularity,
+                                    'acousticness': audio_features['acousticness'],
+                                    'danceability': audio_features['danceability'],
+                                    'duration_ms': audio_features['duration_ms'],
+                                    'energy': audio_features['energy'],
+                                    'instrumentalness': audio_features['instrumentalness'],
+                                    'liveness': audio_features['liveness'],
+                                    'loudness': audio_features['loudness'],
+                                    'speechiness': audio_features['speechiness'],
+                                    'tempo': audio_features['tempo'],
+                                    'valence': audio_features['valence'],
+                                    'playlist_name': playlist.name,
+                                    'playlist_category': category_id})
                 except:
                     continue
 
 
 if __name__ == "__main__":
-    # check command line
-    if (len(sys.argv) != 2):
-        sys.exit("Please enter a range <intA>-<intB>")
-    args = sys.argv[1:]
+    if len(sys.argv) == 2:
+        args = sys.argv[1:]
+    # testing env python -m training.api_getdata <range>
+    elif len(sys.argv) == 3:
+        args = sys.argv[2:]
+    else:
+        sys.exit("If in 'training' folder, run: python -m training.api_getdata <intA>-<intB>; where <intA>-<intB> is a range (e.g. 0-5); else remove the '-m'")
 
     if "-" in args[0]:
         args = args[0].split("-")
@@ -126,7 +143,7 @@ if __name__ == "__main__":
     token = get_token(client_id, client_secret)
 
     # get playlists
-    path = 'data/'
+    path = 'training/data/'
 
     happy = []
     party = []
@@ -171,7 +188,7 @@ if __name__ == "__main__":
 
     # create csv dataset
     # 0 - happy; 1 - party; 2 - chill; 3 - sad
-    create_csv(token, 'data_popularity.csv', happy, 0, write_header=True)
-    create_csv(token, 'data_popularity', party, 1)
-    create_csv(token, 'data_popularity', chill, 2)
-    create_csv(token, 'data_popularity', sad, 3)
+    create_csv(token, 'data.csv', happy, 0, write_header=True)
+    create_csv(token, 'data.csv', party, 1)
+    create_csv(token, 'data.csv', chill, 2)
+    create_csv(token, 'data.csv', sad, 3)

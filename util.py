@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import base64
 from api_util import get_audio_features
 import numpy as np
+import csv
 import os
 import pickle
 
@@ -152,3 +153,46 @@ def predict_vibe(access_token, track_id):
         response = PREDICTION_LIST[2]
         
     return response
+
+def create_csv_from_model(token, csv_filename, playlists, write_header=False):
+    """
+    Creates csv file with audio features based on list of Playlist Objects
+    Arguments:
+        token: access token
+        csv_filename: filename for csv
+        playlists: a list of Playlist Objects
+        category_id: label based on model
+    """
+    if csv_filename == None:
+        csv_filename = 'data.csv'
+    if csv_filename[-4:] != '.csv':
+        raise Exception("Please enter a valid csv - please include .csv in filename")
+    if len(playlists) == 0:
+        raise Exception("No Playlist Objects found")
+
+    with open(csv_filename, 'w', encoding='utf-8', newline='') as csvfile:
+
+        fieldnames = ['name','artist','id','playlist_name', 'vibe']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+        if write_header:
+            writer.writeheader()
+
+        for playlist in playlists:
+            for n in range(len(playlist.tracklist)):
+                name = playlist.tracklist[n][0]
+                artist = playlist.tracklist[n][1]
+                id = playlist.tracklist[n][2]
+
+                # make prediction
+                predicted_vibe = predict_vibe(token, id)
+
+                # write to csv
+                try:
+                    writer.writerow({'name': name,
+                                    'artist': artist,
+                                    'id': id,
+                                    'playlist_name': playlist.name,
+                                    'vibe': predicted_vibe})
+                except:
+                    continue

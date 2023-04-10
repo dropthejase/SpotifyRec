@@ -63,7 +63,7 @@ def get_category_playlists(token, category_id, country="GB", limit=1, offset=0):
     Returns:
         A dict comprising:
             name: name of playlist
-            api: spotify call to get tracks in playlist
+            playlist_id: playlist ID
     """
     url = f"https://api.spotify.com/v1/browse/categories/{category_id}/playlists?country={country}&offset={offset}&limit={limit}"
     items = api_call(token, url)["playlists"]["items"]
@@ -71,8 +71,8 @@ def get_category_playlists(token, category_id, country="GB", limit=1, offset=0):
     result = {}
     for item in range(len(items)):
         name = items[item]["name"]
-        playlist_api = items[item]["href"]
-        result[name] = playlist_api
+        playlist_id = items[item]["id"]
+        result[name] = playlist_id
 
     return result
 
@@ -94,11 +94,15 @@ def get_single_playlist(token, playlist_id):
         num_tracks = result['tracks']['total']
     else:
         num_tracks = 100
+    
     for i in range(num_tracks):
-        track_name = result['tracks']['items'][i]['track']['name']
-        track_artist = result['tracks']['items'][i]['track']['artists'][0]['name']
-        track_id = result['tracks']['items'][i]['track']['id']
-        playlist.add_track(track_name, track_artist, track_id)
+        try:
+            track_name = result['tracks']['items'][i]['track']['name']
+            track_artist = result['tracks']['items'][i]['track']['artists'][0]['name']
+            track_id = result['tracks']['items'][i]['track']['id']
+            playlist.add_track(track_name, track_artist, track_id)
+        except:
+            continue
     
     return playlist
 

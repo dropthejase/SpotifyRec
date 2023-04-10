@@ -1,5 +1,3 @@
-### haven't figured out importing yet so have to move this out of test folder to work
-
 from dotenv import load_dotenv
 import os
 import sys
