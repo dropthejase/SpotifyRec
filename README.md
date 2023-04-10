@@ -1,8 +1,13 @@
 # Vibe-Based Spotify Recommender #
 
 ## Background ##
-The Vibe-Based Spotify Recommender uses a Random Forest classifier trained on 
-Songs were 
+The Vibe-Based Spotify Recommender uses a Random Forest classifier trained on around 20,000 songs to be able to classify the 'vibe' of a track (either party, chill, or sad), based on audio features of each song according to the Spotify API.
+
+This is then used to classify new songs from Spotify's featured playlists under the 'toplists' category, which is stored in a SQL database.
+
+The recommender then queries the the database to provide song recommendations for each vibe. The user can then create a playlist with these songs.
+
+The user can also enter a track ID to see what vibe the algorithm predicts.
 
 I used this project as a way to:
 * Practice using ML algorithms on my own sourced datasets
@@ -55,9 +60,9 @@ util.refresh_table() # to fresh the SQLite DB
 ## Methodology ##
 The Vibe-Based Spotify Recommender uses a Random Forest classifier trained on roughly 20,000 songs.
 Songs were gathered by looking through 5000 playlists from the Spotify Million Playlist Dataset (https://www.aicrowd.com/challenges/spotify-million-playlist-dataset-challenge) to see if any had the following words as their playlist name:
-* Party vibe: "party", "fun", "dance", "groove", "club" - to capture upbeat songs. Use cases: parties
-* Chill vibe: "chill", "focus", "ambien[ce/t]", "study", "concentra[te/tion]", "mood", "work" (but not "workout") - to capture less upbeat, but generally positive songs. Use cases: studying, background music
-* Sad vibe: "sad", "breakup", "heartbr[eak]", "moody", "vibe", "depress", "angr", "slow", "alternative". Use cases: type of song you listen to when you're upset
+* **Party vibe:** "party", "fun", "dance", "groove", "club" - to capture upbeat songs. Use cases: parties
+* **Chill vibe:** "chill", "focus", "ambien[ce/t]", "study", "concentra[te/tion]", "mood", "work" (but not "workout") - to capture less upbeat, but generally positive songs. Use cases: studying, background music
+* **Sad vibe:** "sad", "breakup", "heartbr[eak]", "moody", "vibe", "depress", "angr", "slow", "alternative". Use cases: type of song you listen to when you're upset
 
 I then removed playlists with (what I felt were) unrelated to the representation of the vibe I was going for. For example, I removed playlists to do with wedding parties and in one case, a funeral party, from the 'party' playlists that were captured.
 

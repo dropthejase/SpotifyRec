@@ -10,7 +10,7 @@ app.permanent_session_lifetime = timedelta(minutes=60)
 @app.route('/')
 def index():
     if 'user' in session:
-        return redirect(url_for("track_id"))
+        return redirect(url_for("playlists"))
     return render_template("index.html")
 
 @app.route('/login', methods=["POST", "GET"])
@@ -42,7 +42,7 @@ def callback():
     session['user_img'] = user_img
     session['user_id'] = user_id
 
-    return redirect(url_for("track_id"))
+    return redirect(url_for("playlists"))
 
 @app.route('/track_id', methods=['POST', 'GET'])
 def track_id():
@@ -140,7 +140,7 @@ def logout():
         session.clear()
         return redirect(url_for("index"))
     else:
-        return redirect(url_for("track_id"))
+        return redirect(url_for("playlists"))
 
 if __name__ == "__main__":
     app.run(debug=True)
