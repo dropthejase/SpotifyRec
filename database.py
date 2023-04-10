@@ -27,19 +27,25 @@ def refresh_predictions_csv(token, category_id="toplists", limit=25):
     # Create csv with predictions
     create_csv_from_model(token, 'predictions.csv', playlists, True)
 
-def refresh_table(db_name='topplaylist_songs.db', table_name='predictions', csvfile='predictions.csv'):
+def refresh_table(db_name='topplaylist_songs.db', table_name='predictions', csvfilename='predictions.csv'):
 
-    # drop db
+    # delete all entries
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
-    c.execute(f"DROP TABLE {table_name}")
+    c.execute(f"DELETE FROM {table_name}")
     c.commit()
 
-    # create new db
-    create_table(table_name)
-
-    # TO DO add new data
-
+    # add new data
+    with open(csvfilename) as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
+        id = 0
+        for row in reader:
+            if id == 0:
+                id += 1
+                continue
+            c.execute(f"""INSERT INTO {table_name} (name, artist, track_id, playlist_name, vibe)
+                            VALUES (?, ?, ?, ?, ?)""", (row[0], row[1], row[2], row[3], row[4]))
+            id += 1
 
     conn.commit()
     conn.close()
@@ -67,21 +73,6 @@ def create_table(db_name='topplaylist_songs.db', table_name='predictions'):
     # close connection
     conn.close()
 
-if __name__ == "__main__":
+
     
-    conn = sqlite3.connect('topplaylist_songs.db')
-    c = conn.cursor()
-
-    with open('predictions.csv') as csvfile:
-        reader = csv.reader(csvfile, delimiter=',')
-        id = 0
-        for row in reader:
-            if id == 0:
-                id += 1
-                continue
-            c.execute("INSERT INTO predictions (name, artist, track_id, playlist_name, vibe) VALUES (?, ?, ?, ?, ?)", (row[0], row[1], row[2], row[3], row[4]))
-            id += 1
-
-    conn.commit()
-    conn.close()
     
