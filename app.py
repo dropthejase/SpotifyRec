@@ -105,7 +105,7 @@ def playlists():
 
         # Query DB
         selected_vibe = request.form['playlist_vibe']
-        playlist = playlists['selected_vibe']
+        playlist = playlists[selected_vibe]
 
         # Create playlist
         createplaylist_url = f"https://api.spotify.com/v1/users/{user_id}/playlists"
