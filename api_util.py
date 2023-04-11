@@ -22,7 +22,8 @@ def get_token(client_id, client_secret):
     data = {
         "grant_type" : "client_credentials",
         "client_id" : client_id,
-        "client_secret": client_secret}
+        "client_secret": client_secret
+    }
 
     result = post(url, headers=headers, data=data)
     json_result = result.json()
@@ -31,17 +32,62 @@ def get_token(client_id, client_secret):
     return token
 
 
+def get_refresh_token(refresh_token, client_id):
+    url = "https://accounts.spotify.com/api/token"
+    headers = {
+        "Content_Type" : "application/x-www-form-urlencoded"
+    }
+    data = {
+        "grant_type" : "refresh_token",
+        "refresh_token" : refresh_token,
+        "client_id": client_id
+    }
+    
+    result = post(url, headers=headers, data=data)
+    json_result = result.json()
+
+    return json_result['access_token'], json_result['expires_in']
+
+
+def expired(start, expires_in):
+    # add 1s safety buffer
+    if start - 1 < expires_in:
+        return False
+    return True
+
 def api_call(token, url):
     """
-    Calls the Spotify API
+    GET request to the Spotify API
     Arguments:
         token: access token
         url: the url for the GET request - this will depend on what you wish to extract from the Spotify API
     Returns:
         The API's response in JSON format
     """
-    headers = {"Authorization" : "Bearer " + token}
+    headers = {
+        "Authorization" : "Bearer " + token
+    }
     result = get(url, headers=headers)
+    json_result = result.json()
+    return json_result
+
+
+def api_call_post(token, url, body):
+    """
+    POST request to Spotify API
+    Arguments:
+        token: access token
+        url: the url for the POST request
+        body: body of request
+    Returns:
+        The API's response in JSON format
+    """
+    headers = {"Authorization": "Bearer " + token,
+               "Content_Type": "application/json"
+    }
+    body = body
+    result = post(url, headers=headers,data=json.dumps(body))
+
     json_result = result.json()
     return json_result
 
@@ -129,19 +175,3 @@ def get_track_popularity(token, id):
     return result['popularity']
 
 
-def api_call_post(token, url, body):
-    """
-    POST request to Spotify API
-    Arguments:
-        token: access token
-        url: the url for the POST request
-        body: body of request
-    Returns:
-        The API's response in JSON format
-    """
-    headers = {"Authorization": "Bearer " + token,
-               "Content_Type": "application/json"}
-    body = body
-    result = post(url, headers=headers,data=json.dumps(body))
-    json_result = result.json()
-    return json_result

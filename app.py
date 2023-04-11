@@ -1,12 +1,17 @@
 from datetime import datetime, timedelta
+import os
+import time
 
-from flask import Flask, flash, make_response, render_template, request, session, redirect, url_for
+from dotenv import load_dotenv
+from flask import Flask, flash, render_template, request, session, redirect, url_for
 
-from api_util import api_call, api_call_post
+from api_util import api_call, api_call_post, expired, get_refresh_token
 import util
 
+load_dotenv()
 
 app = Flask(__name__)
+app.config['CLIENT_ID'] = os.getenv('CLIENT_ID')
 app.config['SECRET_KEY'] = util.generate_randomstring(16).encode('utf-8')
 app.permanent_session_lifetime = timedelta(minutes=60)
 
@@ -33,9 +38,13 @@ def callback():
     auth_code = request.args.get('code')
     code_verifier = app.config.get('CODE_VERIFIER')
 
-    access_token, refresh_token = util.get_token_pkce(auth_code, code_verifier)
+    start_time = time.time()
+
+    access_token, refresh_token, expires_in = util.get_token_pkce(auth_code, code_verifier)
+
     session['access_token'] = access_token
     session['refresh_token'] = refresh_token
+    session['expires_in'] = start_time + expires_in
 
     # get user's name and store in a session
     user = api_call(access_token, "https://api.spotify.com/v1/me")["display_name"]
@@ -58,6 +67,13 @@ def track_id():
             user_img = session.get('user_img')
             access_token = session.get('access_token')
             track_id = request.form['track_id_input']
+
+            # Time check
+            expires_in = session.get('expires_in')
+            if expired(time.time(), expires_in):
+                access_token, expires_in = get_refresh_token(session['refresh_token'], app.config['CLIENT_ID'])
+                session['access_token'] = access_token
+                session['expires_in'] = time.time() + expires_in
 
             if track_id == "":
                 flash("Please enter a track ID into the box above")
@@ -111,6 +127,13 @@ def playlists():
     }
     if request.method == 'POST':
 
+        # Time check
+        expires_in = session.get('expires_in')
+        if expired(time.time(), expires_in):
+            access_token, expires_in = get_refresh_token(session['refresh_token'], app.config['CLIENT_ID'])
+            session['access_token'] = access_token
+            session['expires_in'] = time.time() + expires_in
+
         # Query DB
         selected_vibe = request.form['playlist_vibe']
         playlist = playlists[selected_vibe]
@@ -121,7 +144,7 @@ def playlists():
 
         createplaylist_body = {"name": playlist_name,
                 "public": "false"
-                }
+        }
         playlist_id = api_call_post(access_token,createplaylist_url,createplaylist_body)['id']
         print("PLAYLIST ID: ", playlist_id)
         
@@ -136,7 +159,9 @@ def playlists():
         api_call_post(access_token, addsongs_url, addsongs_body)
 
         return render_template("playlists.html", user=user, user_img=user_img, playlist_id=playlist_id, playlists=playlists)
+    
     else:
+
         if playlist_id:
             return render_template("playlists.html", user=user, user_img=user_img, playlist_id=playlist_id, playlists=playlists)
         else:

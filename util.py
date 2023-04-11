@@ -71,7 +71,7 @@ def get_auth_code():
         "state": state,
         "code_challenge_method": "S256",
         "code_challenge": code_challenge
-        }
+    }
 
     request = Request('GET', url, params=params)
     request = request.prepare()
@@ -97,7 +97,8 @@ def get_token_pkce(auth_code, code_verifier):
         "code" : auth_code,
         "client_id" : client_id,
         "redirect_uri": redirect_uri,
-        "code_verifier": code_verifier}
+        "code_verifier": code_verifier
+    }
     
     request = Request('POST', url, headers=headers, data=data)
     request = request.prepare()
@@ -106,8 +107,9 @@ def get_token_pkce(auth_code, code_verifier):
     json_result = result.json()
     access_token = json_result["access_token"]
     refresh_token = json_result["refresh_token"]
+    expires_in = json_result["expires_in"]
 
-    return access_token, refresh_token
+    return access_token, refresh_token, expires_in
 
 ########################### MAKING VIBE PREDICTIONS ###########################
 
