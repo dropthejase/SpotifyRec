@@ -3,21 +3,32 @@
     <head>
         <meta charset="UTF-8">
         <title>Vibe-Based Spotify Recommender</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+            integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     </head>
     <body>
-        <h1>Vibe-Based Spotify Recommender</h1>
-        <p>This web app will allow you to do several things:</p>
-        <ol>
-            <li>Test the 'vibe' of a track (party, chill or sad)</li>
-            <li>Create playlists for each of the three vibes above, which you can add to your own playlists</li>
-        </ol>
-        <p>To continue, please enter your name below and hit 'Enter'</p>
-        <p>You will be prompted to login to your Spotify account</p>
-        <p>We'll only keep you logged in for 60min before we ask you to sign back in again!</p>
-        <form action="login" method="post">
-            <input type="submit" class="submit_buttons" value="Log into Spotify" id="user_login">
-        </form>
-        <p style="color: red;">{{ text }}</p>
+        <div class="container-fluid text-center" style="padding-top: 50px">
+            <h1>Vibe-Based Spotify Recommender</h1>
+            <img src="../static/cd.gif" alt="Animated headphones" width="100px">
+            <br>
+            <h4>This web app will allow you to do several things:</h4>
+            <br>
+            <p>Test the 'vibe' of a track (party, chill or sad)</p>
+            <p>Create playlists for each of the three vibes above, which you can add to your own playlists</p>
+            <br>
+            <h4>To continue, please enter your name below and hit 'Enter'</h4>
+            <h4>You will be prompted to login to your Spotify account</h4>
+            <h4>We'll only keep you logged in for 60min before we ask you to sign back in again!</h4>
+            <br>
+            <form action="login" method="post">
+                <input type="submit" class="btn btn-default btn-success" value="Log into Spotify" id="user_login">
+            </form>
+            <p style="color: red;">{{ text }}</p>
+        </div>
+        <!--Footer-->
+        <div class="container-fluid text-center" style="padding-top: 100px;">
+            <a href="https://www.flaticon.com/free-animated-icons/music" title="music animated icons" style="color: grey;">Music animated icons created by Freepik - Flaticon</a>
+        </div>
     </body>
 </html>

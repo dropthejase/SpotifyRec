@@ -2,92 +2,122 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Song Recommendations</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <title>Vibe-Based Song Recommender</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+            integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     </head>
     <body>
-        <div>
-            <form action="logout" method="post">
-                <input type="submit" value="Logout" id="user_logout">
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container-fluid">
+                <ul class="nav nav-tabs nav-justified">
+                    <li role="presentation"><a href="playlists">Create a Vibey Playlist</a></li>
+                    <li role="presentation"><a href="track_id">Evaluate the Track's Vibe</a></li>
+                </ul>
+                <div class="container-fluid">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="navbar-text">Signed in as {{ user }}</li>
+                        <li>
+                            <form class="navbar-form navbar-right" action="logout" method="post">
+                                <input type="submit" class="btn btn-default" value="Logout" id="user_logout">
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!--Face and text-->
+        <div class="container-fluid text-center" style="padding-top: 125px;">
+            <img class="img-thumbnail img-responsive" src = {{ user_img }}>
+            <h3>Create a playlist with the vibe of your choice!</h3>
+            <p>We've collected the newest songs and sorted them out by vibe category so you don't have to!</p>
+            <p>Pick from a party vibe, chill vibe, or sad vibe, and hit 'Create Playlist'</p>
+            <p>Scroll further down to see what songs would be included in each category</p>
+        </div>
+        <br>
+        <!--PARTY SLIDER-->
+        <div class="form-group text-center">
+            <form class="form-inline" action="playlists" method="post">
+                <select name="playlist_vibe" class="btn btn-default dropdown-toggle" style="width: 250px; height: auto;">
+                    <option value="party">Party</option>
+                    <option value="chill">Chill</option>
+                    <option value="sad">Sad</option>
+                </select>
+                <input type="submit" class="btn btn-primary btn-large" value="Create Playlist" id="create_playlist">
             </form>
         </div>
-        <h1>Hi {{ user }}!</h1>
-        <img src = {{ user_img }} height="150px">
-        <h3>Here are some new songs grouped by vibe!</h3>
-        <p>Choose the vibe of the playlist you want and hit 'Create Playlist'</p>
-        <p>Scroll further down to see what songs would be included in each category</p>
-        <form action="playlists" method="post">
-            <select name="playlist_vibe" class="playlist_dropdown">
-                <option value="party">Party</option>
-                <option value="chill">Chill</option>
-                <option value="sad">Sad</option>
-            </select>
-            <input type="submit" class="submit_buttons" value="Create Playlist" id="create_playlist">
-        </form>
-        <br>
-        <div>
+        <!--EMBEDDED PLAYLIST-->
+        <div class="container text-center">
             {% if playlist_id %}
             <p style="color: green;">Created!</p>
-            <iframe style="border-radius:6px" src="https://open.spotify.com/embed/playlist/{{ playlist_id }}?utm_source=generator" width="50%" height="700"
+            <iframe style="border-radius:6px" src="https://open.spotify.com/embed/playlist/{{ playlist_id }}?utm_source=generator" width="50%" height="500"
                 frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             {% endif %}
         </div>
-        <div style="overflow-x:auto;">
-            <h3>Party</h3>
-            <table>
+        <!--TABLES-->
+        <div style="overflow-x:auto;" class="container-fluid" style="text-align:center;">
+            <h3 class="text-center">Party</h3>
+            <br>
+            <table class="table table-striped table-hover table-condensed" style="width: 50%; margin-left:auto; margin-right:auto;">
                 <tr>
-                  <th>Name</th>
-                  <th>Artist</th>
-                  <th>Link</th>
+                    <th style="width: 500px;">Name</th>
+                    <th style="width: 500px;">Artist</th>
+                    <th style="width: 100px;">Link</th>
                 </tr>
                 {% for track in playlists['party'] %}
                 <tr>
-                    <th>{{ track[0] }}</th>
-                    <th>{{ track[1] }}</th>
-                    <th>
+                    <td>{{ track[0] }}</td>
+                    <td>{{ track[1] }}</td>
+                    <td>
                         <a href="https://open.spotify.com/track/{{track[2]}}">Link</a>
-                    </th>
+                    </td>
                 </tr>
                 {% endfor %}
             </table>
         </div>
-        <div style="overflow-x:auto;">
-            <h3>Chill</h3>
-            <table>
+        <div style="overflow-x:auto;" class="container-fluid">
+            <h3 class="text-center">Chill</h3>
+            <br>
+            <table class="table table-striped table-hover table-condensed" style="width: 50%; margin-left:auto; margin-right:auto;">
                 <tr>
-                  <th>Name</th>
-                  <th>Artist</th>
-                  <th>Link</th>
+                    <th style="width: 500px;">Name</th>
+                    <th style="width: 500px;">Artist</th>
+                    <th style="width: 100px;">Link</th>
                 </tr>
                 {% for track in playlists['chill'] %}
                 <tr>
-                    <th>{{ track[0] }}</th>
-                    <th>{{ track[1] }}</th>
-                    <th>
+                    <td>{{ track[0] }}</td>
+                    <td>{{ track[1] }}</td>
+                    <td>
                         <a href="https://open.spotify.com/track/{{track[2]}}">Link</a>
-                    </th>
+                    </td>
                 </tr>
                 {% endfor %}
             </table>
         </div>
-        <div style="overflow-x:auto;">
-            <h3>Sad</h3>
-            <table>
+        <div style="overflow-x:auto;" class="container-fluid">
+            <h3 class="text-center">Sad</h3>
+            <br>
+            <table class="table table-striped table-hover table-condensed" style="width: 50%; margin-left:auto; margin-right:auto;">
                 <tr>
-                  <th>Name</th>
-                  <th>Artist</th>
-                  <th>Link</th>
+                  <th style="width: 500px;">Name</th>
+                  <th style="width: 500px;">Artist</th>
+                  <th style="width: 100px;">Link</th>
                 </tr>
                 {% for track in playlists['sad'] %}
                 <tr>
-                    <th>{{ track[0] }}</th>
-                    <th>{{ track[1] }}</th>
-                    <th>
+                    <td>{{ track[0] }}</td>
+                    <td>{{ track[1] }}</td>
+                    <td>
                         <a href="https://open.spotify.com/track/{{track[2]}}">Link</a>
-                    </th>
+                    </td>
                 </tr>
                 {% endfor %}
             </table>
+        </div>
+        <!--Footer-->
+        <div class="container-fluid text-center" style="padding-top: 100px;">
+            <a href="https://www.flaticon.com/free-animated-icons/music" title="music animated icons" style="color: grey;">Music animated icons created by Freepik - Flaticon</a>
         </div>
     </body>
 </html>

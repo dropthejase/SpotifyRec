@@ -2,43 +2,92 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Vibe Guesser</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <title>Vibe-Based Song Recommender</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+            integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     </head>
     <body>
-        <div>
-            <form action="logout" method="post">
-                <input type="submit" value="Logout" id="user_logout">
-            </form>
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container-fluid">
+                <ul class="nav nav-tabs nav-justified">
+                    <li role="presentation"><a href="playlists">Create a Vibey Playlist</a></li>
+                    <li role="presentation"><a href="track_id">Evaluate the Track's Vibe</a></li>
+                </ul>
+                <div class="container-fluid">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="navbar-text">Signed in as {{ user }}</li>
+                        <li>
+                            <form class="navbar-form navbar-right" action="logout" method="post">
+                                <input type="submit" class="btn btn-default" value="Logout" id="user_logout">
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!--Face and text-->
+        <div class="container text-center" style="padding-top: 125px;">
+            <img class="img-thumbnail img-responsive" src = {{ user_img }}>
+            <h3>Let me guess the vibe of your track!</h3>
+            <p>Based on audio features in the track you provide, I will try to categorise the song into one of the following vibes:</p>
         </div>
-        <h1>Hi {{ user }}!</h1>
-        <img src = {{ user_img }} height="150px">
-        <h3>Let me guess the vibe of your track!</h3>
-        <p>Based on audio features in the track you provide, I will guess whether the song has a:</p>
-        <ol>
-            <li>Party vibe</li>
-            <li>Chill vibe; or</li>
-            <li>Sad vibe</li>
-        </ol>
-        <form action="track_id" method="post">
-            <p>
-                <strong>Enter a track ID below to find out!</strong>
-            </p>
-            <input type="text" name="track_id_input">
-            <br>
-            <br>
-            <input type="submit" class="submit_buttons" value="Get Vibe!" id="predict">
-        </form>
+        <!--The three vibes with icons-->
+        <div class="container-fluid text-center">
+            <div>
+                <img src="../static/disco-ball.gif" width="50px">
+                <h4>Party vibe</h4>
+                <p>Upbeat, energetic<p>
+            </div>
+            <div>
+                <img src="../static/sunset.gif" width="50px">
+                <h4>Chill vibe</h4>
+                <p>Relaxing, slower<p>
+            </div>
+            <div>
+                <img src="../static/sad.gif" width="50px">
+                <h4>Sad vibe</h4>
+                <p>For the breakups<p>
+            </div>
+        </div>
         <br>
-        <div>
+        <!--The form-->
+        <div class="container text-center">
+            <div class="input_group">
+                <form action="track_id" method="post">
+                    <h4>Enter a track ID below to find out!</h4>
+                    <br>
+                    <input type="text" class="form-control" name="track_id_input" placeholder="Enter Track ID...">
+                    <br>
+                    <span class="input-group-btn">
+                        <input type="submit" class="btn btn-default btn-primary" value="Get Vibe!" id="predict">
+                    </span>
+                </form>
+            </div>
+            <p>
+                {% for message in get_flashed_messages()%}
+                    <h4>{{message}}</4>
+                {% endfor %}
+            </p>
+        </div>
+        <div class="container-fluid text-center" style="padding-top: 25px; padding-bottom: 250px;">
             {% if track_id and prediction != 'Something went wrong - please check your track ID and try again.' %}
+            <div class="container" style="padding: 10px;">
+                {% if prediction == 'party' %}
+                <img src="../static/disco-ball.gif" width="50px">
+                {% elif prediction == 'chill' %}
+                <img src="../static/sunset.gif" width="50px">
+                {% else %}
+                <img src="../static/sad.gif" width="50px">
+                {% endif %}
+            </div>
+            <br>
             <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/{{track_id}}?utm_source=generator" width="50%" height="100" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             {% endif %}
         </div>
-        <p>
-            {% for message in get_flashed_messages()%}
-                <p>{{message}}</p>
-            {% endfor %}
-        </p>
+        <!--Footer-->
+        <div class="container-fluid text-center" style="padding-top: 100px;">
+            <a href="https://www.flaticon.com/free-animated-icons/music" title="music animated icons" style="color: grey;">Music animated icons created by Freepik - Flaticon</a>
+        </div>
     </body>
 </html>

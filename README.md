@@ -81,3 +81,6 @@ The final model is then used to predict the vibe of new songs from the 'toplists
 * My search keywords may not be expansive enough
 * The scores of audio features provided by Spotify might also be subjective
 
+## Acknowledgments ##
+Flaticon: https://www.flaticon.com/
+
