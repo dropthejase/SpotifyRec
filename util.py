@@ -190,7 +190,7 @@ def create_csv_from_model(token, csv_filename, playlists, write_header=False):
     with open(csv_filename, 'w', encoding='utf-8', newline='') as csvfile:
 
         fieldnames = ['name','artist','id','playlist_name', 'vibe']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames, quoting=csv.QUOTE_NONE)
 
         if write_header:
             writer.writeheader()
@@ -256,18 +256,20 @@ def refresh_table(db_name='topplaylist_songs.db', table_name='predictions', csvf
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
     c.execute(f"DELETE FROM {table_name}")
-    c.commit()
+    conn.commit()
 
     # add new data
-    with open(csvfilename) as csvfile:
+    with open(csvfilename, encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         id = 0
         for row in reader:
             if id == 0:
                 id += 1
                 continue
+
             c.execute(f"""INSERT INTO {table_name} (name, artist, track_id, playlist_name, vibe)
-                            VALUES (?, ?, ?, ?, ?)""", (row[0], row[1], row[2], row[3], row[4]))
+                        VALUES (?, ?, ?, ?, ?)""", (row[0], row[1], row[2], row[3], row[4]))
+
             id += 1
 
     conn.commit()

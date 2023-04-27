@@ -45,16 +45,13 @@ python app.py
 ```
 
 ### Refreshing the database with new songs ###
-Create a new python file and import util.py
+Simply uncomment the following lines in app.py
 
 ```
-import util.py
-```
-    
-Then use the following commands:
-```
-util.refresh_predictions_csv() # to pull new playlists into a csv file
-util.refresh_table() # to fresh the SQLite DB
+# refresh songs
+token = get_token(os.getenv('CLIENT_ID'), os.getenv('CLIENT_SECRET'))
+util.refresh_predictions_csv(token)
+util.refresh_table()
 ```
 
 ## Methodology ##

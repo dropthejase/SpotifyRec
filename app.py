@@ -5,7 +5,7 @@ import time
 from dotenv import load_dotenv
 from flask import Flask, flash, render_template, request, session, redirect, url_for
 
-from api_util import api_call, api_call_post, expired, get_refresh_token
+from api_util import api_call, api_call_post, expired, get_refresh_token, get_token
 import util
 
 load_dotenv()
@@ -146,7 +146,6 @@ def playlists():
                 "public": "false"
         }
         playlist_id = api_call_post(access_token,createplaylist_url,createplaylist_body)['id']
-        print("PLAYLIST ID: ", playlist_id)
         
         # Add songs to playlist
         addsongs_url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
@@ -178,4 +177,10 @@ def logout():
 
 
 if __name__ == "__main__":
+
+    # refresh songs
+    #token = get_token(os.getenv('CLIENT_ID'), os.getenv('CLIENT_SECRET'))
+    #util.refresh_predictions_csv(token)
+    #util.refresh_table()
+    
     app.run(debug=True)
